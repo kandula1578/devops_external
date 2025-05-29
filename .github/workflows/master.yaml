@@ -1,4 +1,4 @@
-name: external
+name: external1
 
 on:
   push:
