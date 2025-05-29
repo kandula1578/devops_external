@@ -1,1 +1,32 @@
+name: external
 
+
+env:
+  AWS_REGION: us-east-1
+  IMAGE_TAG: master
+  ECR_REGISTRY: 931003996958.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY: devops-external
+
+jobs:
+  build:
+    runs-on: [self-hosted, dev]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Checkout Source code
+        id: checkout
+        run: echo "test"
+
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          GIT_BRANCH: ${{ github.ref_name }}
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
+          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.GIT_BRANCH }} -f Dockerfile .
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.GIT_BRANCH }}
+          docker system prune --force --filter "until=24h"
