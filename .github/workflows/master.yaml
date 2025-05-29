@@ -41,7 +41,7 @@ jobs:
         run: sudo docker build -t kandula17/devops-external:master .
  
       - name: Push Docker image
-        run:  docker push kandula17/devops-external:master          
+        run: sudo docker push kandula17/devops-external:master          
 
 #      - name: Build, tag, and push image to Amazon ECR
 #        id: build-image
