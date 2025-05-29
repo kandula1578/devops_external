@@ -26,7 +26,11 @@ jobs:
           echo "REPOSITORY_LC=${REPOSITORY,,}" >>${GITHUB_ENV}
         env:
           REPOSITORY: "${{ github.repository }}"
-
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::931003996958:role/runner_role
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
