@@ -1,5 +1,8 @@
 name: external
 
+on:
+  push:
+    branches: [rel-dev]
 
 env:
   AWS_REGION: us-east-1
