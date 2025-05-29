@@ -20,6 +20,13 @@ jobs:
         id: checkout
         run: echo "test"
 
+      - name: set lower case repository name
+        id: lc-repository
+        run: |
+          echo "REPOSITORY_LC=${REPOSITORY,,}" >>${GITHUB_ENV}
+        env:
+          REPOSITORY: "${{ github.repository }}"
+
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
@@ -30,6 +37,7 @@ jobs:
           # push it to ECR so that it can
           # be deployed to ECS.
           sudo aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
-          sudo docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.GIT_BRANCH }} -f Dockerfile .
-          sudo docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.GIT_BRANCH }}
+          sudo aws ecr create-repository --repository-name ${{ env.REPOSITORY_LC }} || true
+          sudo docker build -t ${{ env.ECR_REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.GIT_BRANCH }} -f Dockerfile .
+          sudo docker push ${{ env.ECR_REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.GIT_BRANCH }}
           sudo docker system prune --force --filter "until=24h"
