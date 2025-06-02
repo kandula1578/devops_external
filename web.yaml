@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: events-web
+  labels:
+    app: events-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: events-web
+      ver: v2.0
+  template:
+    metadata:
+      labels:
+        app: events-web
+        ver: v2.0
+    spec:
+      containers:
+        - name: events-web
+          image: kandula17/events-website:v2.0
+          ports:
+            - containerPort: 8080
+          env:
+          - name: SERVER
+            value: "http://events-api-svc:8082"
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: events-web-svc
+  name: events-web-svc
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+   app: events-web
+   ver: v2.0
+  type: LoadBalancer
+

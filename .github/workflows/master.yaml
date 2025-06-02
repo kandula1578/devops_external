@@ -9,6 +9,7 @@ env:
   IMAGE_TAG: master
   ECR_REGISTRY: kandula17
   ECR_REPOSITORY: devops-external
+  EKS_CLUSTER_NAME: sree
 
 jobs:
   build:
@@ -42,6 +43,32 @@ jobs:
  
       - name: Push Docker image
         run: sudo docker push kandula17/devops-external:${{ env.IMAGE_TAG }}          
+
+  delpoy:
+
+    needs: [build]
+    runs-on: [self-hosted, dev]
+
+    steps:
+
+      - name: Set up kubectl
+        uses: aws-actions/setup-kubectl@v4
+        with:
+          version: 'latest' # Or a specific version like '1.28.0'
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy to EKS using kubectl (Kustomize example)
+        run: |
+#          sed -i "s|YOUR_ECR_URI|${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NAME }}|g" k8s/deployment.yaml
+#          sed -i "s|YOUR_IMAGE_TAG|${{ env.IMAGE_TAG }}|g" k8s/deployment.yaml
+          kubectl apply -f k8s/web.yaml
+
+
+
+
 
 #      - name: Build, tag, and push image to Amazon ECR
 #        id: build-image
