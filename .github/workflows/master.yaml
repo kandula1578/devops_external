@@ -60,11 +60,11 @@ jobs:
         run: |
           aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
-#      - name: Deploy to EKS using kubectl (Kustomize example)
-#        run: |
+      - name: Deploy to EKS using kubectl (Kustomize example)
+        run: |
 #          sed -i "s|YOUR_ECR_URI|${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NAME }}|g" k8s/deployment.yaml
 #          sed -i "s|YOUR_IMAGE_TAG|${{ env.IMAGE_TAG }}|g" k8s/deployment.yaml
-#          kubectl apply -f k8s/web.yaml
+          kubectl apply -f k8s/web.yaml
 
 
 
