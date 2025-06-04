@@ -10,6 +10,7 @@ env:
   ECR_REGISTRY: kandula17
   ECR_REPOSITORY: devops-external
   EKS_CLUSTER_NAME: sree
+  DOCKERHUB_REPOSITORY_NAME : kandula17/devops-external
 
 jobs:
   build:
@@ -62,8 +63,8 @@ jobs:
 
       - name: Deploy to EKS using kubectl (Kustomize example)
         run: |
-#          sed -i "s|YOUR_ECR_URI|${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NAME }}|g" k8s/deployment.yaml
-#          sed -i "s|YOUR_IMAGE_TAG|${{ env.IMAGE_TAG }}|g" k8s/deployment.yaml
+          sed -i "s|kandula17/devops-external|${{ env.DOCKERHUB_REPOSITORY_NAME }}|g" k8s/web.yaml
+          sed -i "s|master|${{ env.IMAGE_TAG }}|g" k8s/web.yaml
           kubectl apply -f k8s/web.yaml
 
 
